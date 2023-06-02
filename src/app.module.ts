@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsauthModule } from './modules/usauth/usauth.module';
 import configuration from './config/configuration';
 import databaseConfig from './config/database.config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ValidationInterceptor } from './shard/validation.interceptor';
 
 @Module({
   imports: [
@@ -24,7 +26,6 @@ import databaseConfig from './config/database.config';
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
         const databaseConfig = configService.get('database');
-        console.log(databaseConfig);
         return {
           type: databaseConfig.type,
           host: databaseConfig.database.host,
@@ -43,6 +44,13 @@ import databaseConfig from './config/database.config';
     UsauthModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [
+    AppService,
+    // 注册全局的拦截器
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ValidationInterceptor
+    }
+  ]
 })
 export class AppModule {}
