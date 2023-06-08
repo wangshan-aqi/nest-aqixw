@@ -5,10 +5,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsauthModule } from './modules/usauth/usauth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import configuration from './config/configuration';
 import databaseConfig from './config/database.config';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ValidationInterceptor } from './shard/validation.interceptor';
 
 @Module({
   imports: [
@@ -41,16 +40,10 @@ import { ValidationInterceptor } from './shard/validation.interceptor';
       inject: [ConfigService]
     }),
     UsersModule,
-    UsauthModule
+    UsauthModule,
+    AuthModule
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    // 注册全局的拦截器
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ValidationInterceptor
-    }
-  ]
+  providers: [AppService]
 })
 export class AppModule {}
