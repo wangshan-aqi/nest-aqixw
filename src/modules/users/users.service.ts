@@ -1,12 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserPhoneDto } from './dto/create-user-phone.dto';
-import { CreateUserEmailDto } from './dto/create-user-email.dto';
-import { UpdateUserPhoneDto } from './dto/update-user-phone.dto';
-import { UpdateUserEmailDto } from './dto/update-user-email.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { CreateUserDto, RegistrationMethod } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { BcryptService } from 'src/common/bcrypt.service';
+import { FindUserDto } from './dto/find-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -14,35 +13,17 @@ export class UsersService {
     @InjectRepository(Users) private readonly usersRepository: Repository<Users>
   ) {}
   /** 邮箱注册 */
-  async createEmailUsers(createUserPhoneDto: CreateUserPhoneDto) {
-    const user = new Users();
-    user.userName = createUserPhoneDto.userName;
-    user.userPassword = createUserPhoneDto.userPassword;
-    // user.email = createUserPhoneDto.email;
-    user.telPhone = createUserPhoneDto.telPhone;
-    user.avatar = createUserPhoneDto.avatar;
-    user.introduce = createUserPhoneDto.introduce;
-    user.gander = createUserPhoneDto.gander;
-
-    const res = await this.usersRepository.save(user);
-    return res.userId;
-  }
-
-  /** 手机号注册 */
-  async createPhoneUsers(createUserPhoneDto: CreateUserPhoneDto) {
-    const user = new Users();
-    const passwordValid = await BcryptService.hash(
-      createUserPhoneDto.userPassword
-    );
-
-    user.userName = createUserPhoneDto.userName;
-    user.userPassword = passwordValid;
-    // user.email = createUserPhoneDto.email;
-    user.telPhone = createUserPhoneDto.telPhone;
-    user.avatar = createUserPhoneDto.avatar;
-    user.introduce = createUserPhoneDto.introduce;
-    user.gander = createUserPhoneDto.gander;
-
+  async createUsers(createUserDto: CreateUserDto) {
+    const user = new Users(); // 创建一个用户实例
+    // let res; // 保存用户信息
+    user.userName = createUserDto.userName;
+    user.userPassword = createUserDto.userPassword;
+    // user.email = createUserDto.email;
+    user.telPhone = createUserDto.telPhone;
+    user.avatar = createUserDto.avatar;
+    user.introduce = createUserDto.introduce;
+    user.gander = createUserDto.gander;
+    user.registrationMethod = createUserDto.registrationMethod;
     const res = await this.usersRepository.save(user);
     return res.userId;
   }
@@ -66,7 +47,7 @@ export class UsersService {
     return res;
   }
 
-  update(id: number, updateUserPhoneDto: UpdateUserPhoneDto) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
@@ -74,22 +55,36 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
   /** 根据手机号查询用户 */
-  async findOneByTelPhone(
-    telPhone: string
-  ): Promise<{ type: string; res: Users }> {
-    const res = await this.usersRepository.findOne({ where: { telPhone } });
+  async findOneUserById(id: string): Promise<FindUserDto> {
+    const res = await this.usersRepository.findOne({ where: { userId: +id } });
     if (!res) {
       return null;
     }
-    return { type: '手机号', res };
+    const { userPassword, ...result } = res;
+    return result;
   }
 
-  /** 根据手机号查询用户 */
-  async findOneByEmail(email: string): Promise<{ type: string; res: Users }> {
-    const res = await this.usersRepository.findOne({ where: { email } });
-    if (!res) {
-      return null;
+  /** 根据手机号/邮箱/用户名查询用户 */
+  async findOneByUser(payload: CreateUserDto): Promise<Users> {
+    const findUserMap = {
+      [RegistrationMethod.EMAIL]: { email: payload.email },
+      [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
+      [RegistrationMethod.USER_NAME]: { userName: payload.userName }
+    };
+    const res = await this.usersRepository.findOne({
+      where: findUserMap[payload.registrationMethod]
+    });
+    if (res) {
+      let message = '';
+      if (res.telPhone) {
+        message = '手机号已存在';
+      } else if (res.email) {
+        message = '邮箱已存在';
+      } else {
+        message = '用户名已存在';
+      }
+      throw new HttpException({ message }, HttpStatus.BAD_REQUEST);
     }
-    return { type: '邮箱', res };
+    return null;
   }
 }

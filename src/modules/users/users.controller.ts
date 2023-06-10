@@ -1,7 +1,5 @@
-import { CreateUserEmailDto } from './dto/create-user-email.dto';
-import { CreateUserPhoneDto } from './dto/create-user-phone.dto';
-import { UpdateUserEmailDto } from './dto/update-user-email.dto';
-import { UpdateUserPhoneDto } from './dto/update-user-phone.dto';
+import { CreateUserDto, RegistrationMethod } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import {
   Controller,
   Get,
@@ -33,20 +31,11 @@ export class UsersController {
   @ApiBody({
     type: Users
   })
-  async create(@Body() createUserDto: CreateUserPhoneDto) {
-    // 手机号是否已存在
-    const isExistingUser = await this.usersService.findOneByTelPhone(
-      createUserDto.telPhone
-    );
-    if (isExistingUser) {
-      // 如果手机号已存在，抛出异常
-      throw new HttpException(
-        { message: '手机号已存在' },
-        HttpStatus.BAD_REQUEST
-      );
-    } else {
-      // 如果手机号不存在，创建用户
-      return this.usersService.createPhoneUsers(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const isExist = await this.usersService.findOneByUser(createUserDto);
+    // 用户没有注册
+    if (!isExist) {
+      return await this.usersService.createUsers(createUserDto);
     }
   }
 
@@ -61,11 +50,8 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateUserPhoneDto: UpdateUserPhoneDto
-  ) {
-    return this.usersService.update(+id, updateUserPhoneDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(+id, updateUserDto);
   }
 
   @Delete(':id')

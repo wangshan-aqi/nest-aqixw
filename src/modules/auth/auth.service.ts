@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -14,17 +15,20 @@ export class AuthService {
   ) {}
   // 在这里，我们创建了validateUser 方法来检查来自user.model 的用户是否与数据库中的用户记录匹配。
   // 如果没有匹配，该方法返回一个null 的值。
-
-  async validateUser(userName: string, password: string): Promise<any> {
+  // 如果有匹配，该方法返回一个包含用户信息的对象，但是不包含密码。
+  async validateUser(userName: string, userPassword: string): Promise<any> {
     const user = await this.usersService.findOneUserForUserName(userName);
     console.log(user, 'user');
-    if (!user) return null;
-    // const passwordValid = await bcrypt.compare(password, user.userPassword);
+    /** 检查用户是否存在 */
     if (!user) throw new NotAcceptableException();
-    if (user?.userPassword !== password) {
+    /** 检查密码和数据库中的密码是否匹配 返回布尔值 */
+    const passwordValid = await bcrypt.compare(userPassword, user.userPassword);
+    /** 检查密码是否有效 */
+    if (!passwordValid) {
       throw new UnauthorizedException();
     }
-    if (user && user.userPassword === password) {
+    /** 如果密码有效，则返回token 和 除密码外的用户信息 */
+    if (user && passwordValid) {
       const { userPassword, ...result } = user;
       // TODO: Generate a JWT and return it here
       // instead of the user object
