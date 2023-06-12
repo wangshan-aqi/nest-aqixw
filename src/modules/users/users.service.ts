@@ -12,18 +12,37 @@ export class UsersService {
     @InjectRepository(Users) private readonly usersRepository: Repository<Users>
   ) {}
   /** 邮箱注册 */
-  async createUsers(createUserDto: CreateUserDto) {
+  async createUsersForEmail(createUserDto: CreateUserDto): Promise<number> {
     const user = new Users(); // 创建一个用户实例
-    // let res; // 保存用户信息
+    const isExist = this.findOneByUser(createUserDto, '邮箱已存在');
+    user.email = createUserDto.email;
+    user.userPassword = createUserDto.userPassword;
+    if (!isExist) {
+      const res = await this.usersRepository.save(user);
+      return res.userId;
+    }
+  }
+  /** 手机号注册 */
+  async createUsersForPhone(createUserDto: CreateUserDto): Promise<number> {
+    const user = new Users(); // 创建一个用户实例
+    const isExist = this.findOneByUser(createUserDto, '手机号已存在');
+    user.telPhone = createUserDto.telPhone;
+    user.userPassword = createUserDto.userPassword;
+    if (!isExist) {
+      const res = await this.usersRepository.save(user);
+      return res.userId;
+    }
+  }
+  /** 用户名注册 */
+  async createUsersForUserName(createUserDto: CreateUserDto): Promise<number> {
+    const user = new Users(); // 创建一个用户实例
+    const isExist = await this.findOneByUser(createUserDto, '用户名已存在');
     user.userName = createUserDto.userName;
     user.userPassword = createUserDto.userPassword;
-    // user.email = createUserDto.email;
-    user.telPhone = createUserDto.telPhone;
-    user.avatar = createUserDto.avatar;
-    user.introduce = createUserDto.introduce;
-    user.gander = createUserDto.gander;
-    const res = await this.usersRepository.save(user);
-    return res.userId;
+    if (!isExist) {
+      const res = await this.usersRepository.save(user);
+      return res.userId;
+    }
   }
 
   findAll() {
@@ -39,9 +58,36 @@ export class UsersService {
     return res;
   }
 
-  // 根据用户名查询用户
-  async findOneUserForUserName(userName: string): Promise<Users | null> {
-    const res = await this.usersRepository.findOne({ where: { userName } });
+  // 查询用户是否存在
+  async findOneUserExist(payload: CreateUserDto): Promise<Users> {
+    const searchMap = {
+      [RegistrationMethod.EMAIL]: { email: payload.email },
+      [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
+      [RegistrationMethod.USER_NAME]: { userName: payload.userName }
+    };
+    let res = null;
+    switch (payload.registrationMethod) {
+      case RegistrationMethod.EMAIL:
+        res = await this.usersRepository.findOneBy(
+          searchMap[payload.registrationMethod]
+        );
+        if (!res) this.errorFun('邮箱未注册');
+        break;
+      case RegistrationMethod.PHONE:
+        res = await this.usersRepository.findOneBy(
+          searchMap[payload.registrationMethod]
+        );
+        if (!res) this.errorFun('手机号未注册');
+        break;
+      case RegistrationMethod.USER_NAME:
+        res = await this.usersRepository.findOneBy(
+          searchMap[payload.registrationMethod]
+        );
+        if (!res) this.errorFun('用户名未注册');
+        break;
+    }
+    console.log(res, 'res');
+
     return res;
   }
 
@@ -54,34 +100,39 @@ export class UsersService {
   }
 
   /** 根据手机号/邮箱/用户名查询用户 */
-  async findOneByUser(payload: CreateUserDto): Promise<Users> {
-    let res;
-    if (payload.email) {
-      console.log('邮箱注册');
-      res = await this.usersRepository.findOne({
-        where: { email: payload.email }
-      });
-      res && this.isExistUser(res, '邮箱已存在');
-    } else if (payload.telPhone) {
-      console.log('手机号注册');
-      res = await this.usersRepository.findOne({
-        where: { telPhone: payload.telPhone }
-      });
-      res && this.isExistUser(res, '手机号已存在');
-    } else if (payload.userName) {
-      console.log('用户名注册');
-      res = await this.usersRepository.findOne({
-        where: { userName: payload.userName }
-      });
-      console.log(res, '----');
-
-      res && this.isExistUser(res, '用户名已存在');
+  async findOneByUser(payload: CreateUserDto, message: string): Promise<Users> {
+    const searchMap = {
+      [RegistrationMethod.EMAIL]: { email: payload.email },
+      [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
+      [RegistrationMethod.USER_NAME]: { userName: payload.userName }
+    };
+    let res = null;
+    switch (payload.registrationMethod) {
+      case RegistrationMethod.EMAIL:
+        res = await this.usersRepository.findOneBy(
+          searchMap[payload.registrationMethod]
+        );
+        if (res) this.errorFun('邮箱已注册');
+        break;
+      case RegistrationMethod.PHONE:
+        res = await this.usersRepository.findOneBy(
+          searchMap[payload.registrationMethod]
+        );
+        if (res) this.errorFun('手机号已注册');
+        break;
+      case RegistrationMethod.USER_NAME:
+        res = await this.usersRepository.findOneBy(
+          searchMap[payload.registrationMethod]
+        );
+        if (res) this.errorFun('用户名已注册');
+        break;
     }
+
     return null;
   }
-  isExistUser(res: any, message: string) {
-    if (res) {
-      throw new HttpException({ message }, HttpStatus.BAD_REQUEST);
-    }
+
+  /** 判断用户是否存在 返回错误信息 */
+  errorFun(message: string) {
+    throw new HttpException({ message }, HttpStatus.BAD_REQUEST);
   }
 }

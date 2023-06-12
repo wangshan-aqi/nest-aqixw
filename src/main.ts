@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { HttpExceptionFilter } from './filter/all-exception.filter';
 import { TransformResInterceptor } from './interceptor/transform-res.interceptor';
+import { LocalAuthGuard } from './gurad/local-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -57,7 +58,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new TransformResInterceptor() // 全局拦截器
   );
-  // 全局守卫
+
   // 全局路由前缀
   // 全局引入中间件
   // 全局引入自定义装饰器

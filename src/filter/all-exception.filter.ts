@@ -12,6 +12,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp(); // 获取上下文 也就是获取http模块获取请求和响应对象
     const response = ctx.getResponse<Response>(); // 获取响应对象
     const request = ctx.getRequest<Request>(); // 获取请求对象
+
     const status = exception.getStatus(); // 获取错误状态码
     const exceptionRes = exception.getResponse() as any; // 获取错误信息
     const { code, message } = exceptionRes as any;
@@ -19,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const errorResponse = {
       // 错误信息的格式
-      statusCode: status, // 状态码
+      statusCode: status || code, // 状态码
       message: message || '请求失败', // 错误信息
       data: null, // 返回的数据
       success: false, // 是否请求成功

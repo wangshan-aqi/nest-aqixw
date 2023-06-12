@@ -32,12 +32,15 @@ export class UsersController {
     type: Users
   })
   async create(@Body() createUserDto: CreateUserDto) {
-    const isExist = await this.usersService.findOneByUser(createUserDto);
-    console.log(isExist, 'isExist');
-
-    // 用户没有注册
-    if (!isExist) {
-      return await this.usersService.createUsers(createUserDto);
+    if (createUserDto.registrationMethod === RegistrationMethod.EMAIL) {
+      return await this.usersService.createUsersForEmail(createUserDto);
+    } else if (createUserDto.registrationMethod === RegistrationMethod.PHONE) {
+      return await this.usersService.createUsersForPhone(createUserDto);
+    } else if (
+      createUserDto.registrationMethod === RegistrationMethod.USER_NAME
+    ) {
+      const res = await this.usersService.createUsersForUserName(createUserDto);
+      return res;
     }
   }
 

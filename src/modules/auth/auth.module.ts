@@ -9,17 +9,16 @@ import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Users } from '../users/entities/user.entity';
+import { LocalStrategy } from './local.strategy';
 
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
-    JwtModule.register({
-      ...jwtConstants
-    }),
+    PassportModule.register({ defaultStrategy: 'local' }),
+    JwtModule.register({ ...jwtConstants }),
     TypeOrmModule.forFeature([Users])
   ],
-  providers: [AuthService, UsersService, JwtStrategy],
+  providers: [AuthService, UsersService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService]
 })

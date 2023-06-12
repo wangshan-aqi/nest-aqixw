@@ -6,43 +6,22 @@ import {
   QueryBuilder
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { Gander, IsDelete, RegistrationMethod } from '../dto/create-user.dto';
+import { IsDelete, RegistrationMethod } from '../dto/create-user.dto';
 import { BcryptService } from '../../../common/bcrypt.service';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository, getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
-// @Injectable()
-// export class MyService {
-//   constructor(
-//     @InjectRepository(Users)
-//     private readonly myEntityRepository: Repository<Users>
-//   ) {}
-// }
 
 @Entity()
 export class Users {
-  @PrimaryGeneratedColumn({
-    type: 'bigint',
-    unsigned: true,
-    zerofill: true
-  })
+  @PrimaryGeneratedColumn({ comment: '用户id' })
   userId: number;
 
-  @Column({ type: 'varchar', length: 50, comment: '用户名' })
+  @Column({ type: 'varchar', length: 50, nullable: true, comment: '用户名' })
   userName: string;
 
   @Column({
     type: 'varchar',
-    length: 255,
-    nullable: false, // 不可为空
-    comment: '密码'
-  })
-  userPassword: string;
-  @Column({
-    type: 'varchar',
     length: 11,
     unique: true, // 唯一
+    nullable: true, // 可以为空
     comment: '手机号'
   })
   telPhone: string;
@@ -56,20 +35,20 @@ export class Users {
   })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: true, comment: '头像' })
-  avatar: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true, comment: '个人简介' })
-  introduce: string;
-
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: false, // 不可为空
+    comment: '密码'
+  })
+  userPassword: string;
   @Column({
     type: 'enum',
-    enum: Gander,
-    nullable: false,
-    default: 2,
-    comment: '性别'
+    enum: RegistrationMethod,
+    default: RegistrationMethod.PHONE,
+    comment: '注册方式'
   })
-  gander: Gander;
+  registrationMethod: RegistrationMethod;
 
   @Column({
     type: 'enum',
@@ -95,17 +74,5 @@ export class Users {
   @BeforeInsert() // 在插入之前调用 加密密码 保证插入数据库的密码都是加密后的 密码加密 用到了bcryptjs 这个库
   private async encryptPwd() {
     this.userPassword = await BcryptService.hash(this.userPassword);
-  }
-
-  @BeforeInsert() // 在插入之前调用 id开始的时候就是10000
-  private async setUserId() {
-    if (!this.userId) {
-      console.log(Users.findOne);
-
-      // 从数据库中获取最大的id
-      // const lastRecord = await Users.findOne({ order: { userId: 'DESC' } });
-      // const lastId = lastRecord ? lastRecord.userId : 9999;
-      // this.userId = lastId + 1;
-    }
   }
 }
