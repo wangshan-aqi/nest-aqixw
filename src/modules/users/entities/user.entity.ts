@@ -1,11 +1,32 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  QueryBuilder
+} from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gander, IsDelete, RegistrationMethod } from '../dto/create-user.dto';
 import { BcryptService } from '../../../common/bcrypt.service';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository, getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+// @Injectable()
+// export class MyService {
+//   constructor(
+//     @InjectRepository(Users)
+//     private readonly myEntityRepository: Repository<Users>
+//   ) {}
+// }
 
 @Entity()
 export class Users {
-  @PrimaryGeneratedColumn({ comment: '用户id' })
+  @PrimaryGeneratedColumn({
+    type: 'bigint',
+    unsigned: true,
+    zerofill: true
+  })
   userId: number;
 
   @Column({ type: 'varchar', length: 50, comment: '用户名' })
@@ -52,15 +73,6 @@ export class Users {
 
   @Column({
     type: 'enum',
-    enum: RegistrationMethod,
-    nullable: false,
-    default: 2,
-    comment: '注册方式'
-  })
-  registrationMethod: RegistrationMethod;
-
-  @Column({
-    type: 'enum',
     enum: IsDelete,
     default: IsDelete.NODELETE,
     comment: '是否删除'
@@ -81,7 +93,19 @@ export class Users {
    * 使用装饰器@BeforeInsert来装饰encryptPwd方法，表示该方法在数据插入之前调用，这样就能保证插入数据库的密码都是加密后的。
    */
   @BeforeInsert() // 在插入之前调用 加密密码 保证插入数据库的密码都是加密后的 密码加密 用到了bcryptjs 这个库
-  async encryptPwd() {
+  private async encryptPwd() {
     this.userPassword = await BcryptService.hash(this.userPassword);
+  }
+
+  @BeforeInsert() // 在插入之前调用 id开始的时候就是10000
+  private async setUserId() {
+    if (!this.userId) {
+      console.log(Users.findOne);
+
+      // 从数据库中获取最大的id
+      // const lastRecord = await Users.findOne({ order: { userId: 'DESC' } });
+      // const lastId = lastRecord ? lastRecord.userId : 9999;
+      // this.userId = lastId + 1;
+    }
   }
 }

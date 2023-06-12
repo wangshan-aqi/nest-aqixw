@@ -43,8 +43,9 @@ export class CreateUserDto {
     description: '用户名',
     example: 'admin'
   })
-  @IsOptional()
-  @IsString()
+  @ValidateIf(o => !o.telPhone && !o.email)
+  @IsNotEmpty({ message: '用户名不能为空' })
+  @IsString({ message: '用户名必须是字符串' })
   userName: string;
 
   @ApiProperty({
@@ -62,9 +63,10 @@ export class CreateUserDto {
     example: 'aaaa@bb.com',
     required: false
   })
+  @ValidateIf(o => !o.telPhone && !o.userName)
   @IsCustomEmail({ message: '邮箱格式不正确' })
-  @IsOptional()
-  @IsString()
+  @IsNotEmpty({ message: '邮箱不能为空' })
+  @IsString({ message: '用户名必须是字符串' })
   email: string;
 
   @ApiProperty({
@@ -72,11 +74,12 @@ export class CreateUserDto {
     example: '18888888888',
     required: false
   })
+  @ValidateIf(o => !o.userName && !o.email)
   @MaxLength(11, { message: '手机号长度不能大于11位' })
   @MinLength(11, { message: '手机号长度不能小于11位' })
   @IsCustomPhone({ message: '手机号格式不正确' })
-  @IsOptional()
-  @IsString()
+  @IsNotEmpty({ message: '手机号不能为空' })
+  @IsString({ message: '用户名必须是字符串' })
   telPhone: string;
 
   @IsString()
@@ -100,16 +103,4 @@ export class CreateUserDto {
     each: true // 每个都要验证
   })
   readonly gander: Gander;
-
-  @ApiProperty({
-    enum: RegistrationMethod,
-    description: '注册方式',
-    example: 0,
-    required: false,
-    default: 0
-  })
-  @IsEnum(RegistrationMethod, {
-    message: '注册方式必须是手机号、邮箱、用户名中的一个枚举'
-  })
-  readonly registrationMethod: RegistrationMethod;
 }

@@ -33,6 +33,8 @@ export class UsersController {
   })
   async create(@Body() createUserDto: CreateUserDto) {
     const isExist = await this.usersService.findOneByUser(createUserDto);
+    console.log(isExist, 'isExist');
+
     // 用户没有注册
     if (!isExist) {
       return await this.usersService.createUsers(createUserDto);

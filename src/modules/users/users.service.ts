@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { BcryptService } from 'src/common/bcrypt.service';
-import { FindUserDto } from './dto/find-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +22,6 @@ export class UsersService {
     user.avatar = createUserDto.avatar;
     user.introduce = createUserDto.introduce;
     user.gander = createUserDto.gander;
-    user.registrationMethod = createUserDto.registrationMethod;
     const res = await this.usersRepository.save(user);
     return res.userId;
   }
@@ -54,37 +52,36 @@ export class UsersService {
   remove(id: number) {
     return `This action removes a #${id} user`;
   }
-  /** 根据手机号查询用户 */
-  async findOneUserById(id: string): Promise<FindUserDto> {
-    const res = await this.usersRepository.findOne({ where: { userId: +id } });
-    if (!res) {
-      return null;
-    }
-    const { userPassword, ...result } = res;
-    return result;
-  }
 
   /** 根据手机号/邮箱/用户名查询用户 */
   async findOneByUser(payload: CreateUserDto): Promise<Users> {
-    const findUserMap = {
-      [RegistrationMethod.EMAIL]: { email: payload.email },
-      [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
-      [RegistrationMethod.USER_NAME]: { userName: payload.userName }
-    };
-    const res = await this.usersRepository.findOne({
-      where: findUserMap[payload.registrationMethod]
-    });
-    if (res) {
-      let message = '';
-      if (res.telPhone) {
-        message = '手机号已存在';
-      } else if (res.email) {
-        message = '邮箱已存在';
-      } else {
-        message = '用户名已存在';
-      }
-      throw new HttpException({ message }, HttpStatus.BAD_REQUEST);
+    let res;
+    if (payload.email) {
+      console.log('邮箱注册');
+      res = await this.usersRepository.findOne({
+        where: { email: payload.email }
+      });
+      res && this.isExistUser(res, '邮箱已存在');
+    } else if (payload.telPhone) {
+      console.log('手机号注册');
+      res = await this.usersRepository.findOne({
+        where: { telPhone: payload.telPhone }
+      });
+      res && this.isExistUser(res, '手机号已存在');
+    } else if (payload.userName) {
+      console.log('用户名注册');
+      res = await this.usersRepository.findOne({
+        where: { userName: payload.userName }
+      });
+      console.log(res, '----');
+
+      res && this.isExistUser(res, '用户名已存在');
     }
     return null;
+  }
+  isExistUser(res: any, message: string) {
+    if (res) {
+      throw new HttpException({ message }, HttpStatus.BAD_REQUEST);
+    }
   }
 }
