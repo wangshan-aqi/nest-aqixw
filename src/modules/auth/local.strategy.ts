@@ -1,20 +1,21 @@
-import { SignInDto } from './dto/sign-in-dto';
-import { Strategy, IStrategyOptions } from 'passport-local';
+import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(private readonly authService: AuthService) {
-    super();
+    super({
+      usernameField: 'username',
+      passReqToCallback: true
+    });
   }
 
-  async validate(signInDto: SignInDto): Promise<any> {
-    console.log(signInDto, 'userName, password');
+  async validate(res, username: string, password: string): Promise<any> {
+    console.log(res, 'res');
 
-    const user = await this.authService.validateUser(signInDto);
-
+    const user = await this.authService.validateUser(username, password);
     if (!user) {
       throw new UnauthorizedException();
     }

@@ -32,15 +32,16 @@ export class UsersController {
     type: Users
   })
   async create(@Body() createUserDto: CreateUserDto) {
-    if (createUserDto.registrationMethod === RegistrationMethod.EMAIL) {
-      return await this.usersService.createUsersForEmail(createUserDto);
-    } else if (createUserDto.registrationMethod === RegistrationMethod.PHONE) {
-      return await this.usersService.createUsersForPhone(createUserDto);
-    } else if (
-      createUserDto.registrationMethod === RegistrationMethod.USER_NAME
-    ) {
-      const res = await this.usersService.createUsersForUserName(createUserDto);
-      return res;
+    switch (createUserDto.registrationMethod) {
+      case RegistrationMethod.EMAIL:
+        return await this.usersService.createUsersForEmail(createUserDto);
+      case RegistrationMethod.PHONE:
+        const res = await this.usersService.createUsersForPhone(createUserDto);
+        return res;
+      case RegistrationMethod.USER_NAME:
+        return await this.usersService.createUsersForUserName(createUserDto);
+      default:
+        throw new HttpException('注册方式错误', HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -51,7 +52,7 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+    // return this.usersService.findOne(id);
   }
 
   @Patch(':id')

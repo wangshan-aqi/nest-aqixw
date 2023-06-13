@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { HttpExceptionFilter } from './filter/all-exception.filter';
 import { TransformResInterceptor } from './interceptor/transform-res.interceptor';
-import { LocalAuthGuard } from './gurad/local-auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
