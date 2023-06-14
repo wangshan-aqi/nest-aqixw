@@ -7,7 +7,7 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegistrationMethod } from '../users/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { UserNameSignInDto } from './dto/name.sign-in-dto';
+import { ISignInUserRes } from './interface/res.interface';
 
 @Injectable()
 export class AuthService {
@@ -16,11 +16,6 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  //   async validateUser(
-  //     username: string,
-  //     pass: string,
-  //     type: RegistrationMethod
-  //   ): Promise<any> {
   async validateUser(
     type: RegistrationMethod,
     username: string,
@@ -48,16 +43,34 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any) {
-    const payload = { userName: user.userName, sub: user.userId };
-    return {
-      access_token: this.signToken(payload)
+  async login(user: any): Promise<ISignInUserRes> {
+    return await {
+      userId: user.userId,
+      userName: user.userName,
+      access_token: this.signToken(user), // 生成token
+      refresh_token: this.signRefreshToken(user) // 生成RefreshToken
     };
   }
 
   /** 生成token */
   signToken(user: any) {
     const payload = { username: user.userName, sub: user.userId };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: 360 // 过期时间
+    });
+  }
+
+  /** 生成RefreshToken */
+  signRefreshToken(user: any) {
+    const payload = {
+      type: 'refresh',
+      username: user.userName,
+      sub: user.userId
+    };
+    return this.jwtService.sign(payload, {
+      secret: process.env.REFRESH_TOKEN_SECRET, // 密钥
+      expiresIn: process.env.REFRESH_TOKEN_TTL // 过期时间
+    });
   }
 }

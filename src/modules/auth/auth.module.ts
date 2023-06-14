@@ -11,8 +11,7 @@ import { Users } from '../users/entities/user.entity';
 import { UserNameLocalStrategy } from './guard/local-name.strategy';
 import { EmailLocalStrategy } from './guard/local-email.strategy';
 import { TelPhoneLocalStrategy } from './guard/local-phone.strategy';
-import { AccessJwtStrategy } from './guard/access-jwt.strategy';
-import { RefreshJwtStrategy } from './guard/refresh-jwt.strategy';
+import { JwtStrategy } from './guard/jwt.strategy';
 
 @Module({
   imports: [
@@ -20,9 +19,8 @@ import { RefreshJwtStrategy } from './guard/refresh-jwt.strategy';
     TypeOrmModule.forFeature([Users]),
     PassportModule.register({}),
     JwtModule.register({
-      // ...jwtConstants
-      secret: jwtConstants.secret,
-      signOptions: jwtConstants.signOptions
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN }
     })
   ],
   controllers: [AuthController],
@@ -32,8 +30,7 @@ import { RefreshJwtStrategy } from './guard/refresh-jwt.strategy';
     UserNameLocalStrategy,
     EmailLocalStrategy,
     TelPhoneLocalStrategy,
-    AccessJwtStrategy,
-    RefreshJwtStrategy
+    JwtStrategy
   ],
   exports: [AuthService]
 })
