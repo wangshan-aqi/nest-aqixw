@@ -15,11 +15,13 @@ import {
   HttpException,
   HttpCode,
   UseFilters,
-  HttpStatus
+  HttpStatus,
+  UseGuards
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Users } from './entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('用户')
 @Controller('users')
@@ -50,9 +52,10 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
-    // return this.usersService.findOne(id);
+    return this.usersService.findOne(id);
   }
 
   @Patch(':id')

@@ -49,13 +49,14 @@ export class UsersService {
     return `This action returns all users`;
   }
   // 根据id查询用户
-  async findOne(username: string): Promise<Users> {
+  async findOne(id: number): Promise<any> {
     const res = await this.usersRepository.findOne({
-      where: {
-        userName: username
-      }
+      where: { userId: id }
     });
-    return res;
+    const { userPassword, ...result } = res;
+    console.log(result);
+
+    return result;
   }
 
   // 查询用户是否存在

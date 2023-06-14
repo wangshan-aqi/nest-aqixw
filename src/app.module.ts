@@ -9,6 +9,8 @@ import configuration from './config/configuration';
 import databaseConfig from './config/database.config';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -45,7 +47,13 @@ import { AuthModule } from './modules/auth/auth.module';
     AuthModule
   ],
   controllers: [AppController],
-  providers: [AppService]
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard
+    }
+  ]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

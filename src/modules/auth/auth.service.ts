@@ -49,7 +49,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { userName: user.userName, userId: user.userId };
+    const payload = { userName: user.userName, sub: user.userId };
     return {
       access_token: this.signToken(payload)
     };
