@@ -4,9 +4,10 @@ import {
   UnauthorizedException
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { SignInDto } from './dto/sign-in-dto';
+import { RegistrationMethod } from '../users/dto/create-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { UserNameSignInDto } from './dto/name.sign-in-dto';
 
 @Injectable()
 export class AuthService {
@@ -14,19 +15,23 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService
   ) {}
-  // 在这里，我们创建了validateUser 方法来检查来自user.model 的用户是否与数据库中的用户记录匹配。
-  // 如果没有匹配，该方法返回一个null 的值。
-  // 如果有匹配，该方法返回一个包含用户信息的对象，但是不包含密码。
-  async validateUser(username, password): Promise<any> {
-    // const user = await this.usersService.findOneUserExist(signInDto);
-    const user = await this.usersService.findOne(username);
-    console.log(user, 'user');
 
+  //   async validateUser(
+  //     username: string,
+  //     pass: string,
+  //     type: RegistrationMethod
+  //   ): Promise<any> {
+  async validateUser(
+    type: RegistrationMethod,
+    username: string,
+    pass: string
+  ): Promise<any> {
+    const user = await this.usersService.findOneUserExist(type, username);
     /** 检查用户是否存在 */
-    if (!user) throw new BadRequestException(`用户${username}未注册`);
+    if (!user) throw new BadRequestException(`${username}用户未注册`);
     /** 检查密码和数据库中的密码是否匹配 返回布尔值 */
     const passwordValid = await bcrypt.compare(
-      password, // 用户输入的密码
+      pass, // 用户输入的密码
       user.userPassword // 数据库中的密码
     );
     /** 检查密码是否有效 */
@@ -43,12 +48,16 @@ export class AuthService {
     return null;
   }
 
-  // 创建login 方法，该方法使用jwtService.sign 方法
-  // 为从我们的validate 中返回的用户生成一个JWT访问令牌LocalStrategy 。
   async login(user: any) {
-    const payload = { username: user.userName, sub: user.userId };
+    const payload = { userName: user.userName, userId: user.userId };
     return {
-      access_token: this.jwtService.sign(payload)
+      access_token: this.signToken(payload)
     };
+  }
+
+  /** 生成token */
+  signToken(user: any) {
+    const payload = { username: user.userName, sub: user.userId };
+    return this.jwtService.sign(payload);
   }
 }

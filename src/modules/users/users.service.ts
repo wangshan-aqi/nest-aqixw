@@ -4,13 +4,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { BcryptService } from 'src/common/bcrypt.service';
-import { SignInDto } from '../auth/dto/sign-in-dto';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(Users) private readonly usersRepository: Repository<Users>
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>
   ) {}
   /** 邮箱注册 */
   async createUsersForEmail(createUserDto: CreateUserDto): Promise<number> {
@@ -60,30 +59,27 @@ export class UsersService {
   }
 
   // 查询用户是否存在
-  async findOneUserExist(payload: SignInDto): Promise<Users> {
+  async findOneUserExist(
+    type: RegistrationMethod,
+    lable: string
+  ): Promise<Users> {
     let res = null;
     const searchMap = {
-      [RegistrationMethod.EMAIL]: { email: payload.email },
-      [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
-      [RegistrationMethod.USER_NAME]: { userName: payload.userName }
+      [RegistrationMethod.EMAIL]: { email: lable },
+      [RegistrationMethod.PHONE]: { telPhone: lable },
+      [RegistrationMethod.USER_NAME]: { userName: lable }
     };
-    switch (payload.registrationMethod) {
+    switch (type) {
       case RegistrationMethod.EMAIL:
-        res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod]
-        );
+        res = await this.usersRepository.findOneBy(searchMap[type]);
         if (!res) this.errorFun('邮箱未注册');
         return res;
       case RegistrationMethod.PHONE:
-        res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod]
-        );
+        res = await this.usersRepository.findOneBy(searchMap[type]);
         if (!res) this.errorFun('手机号未注册');
         return res;
       case RegistrationMethod.USER_NAME:
-        res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod]
-        );
+        res = await this.usersRepository.findOneBy(searchMap[type]);
         if (!res) this.errorFun('用户名未注册');
         return res;
     }

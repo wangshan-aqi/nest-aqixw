@@ -5,10 +5,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsauthModule } from './modules/usauth/usauth.module';
-import { AuthModule } from './modules/auth/auth.module';
 import configuration from './config/configuration';
 import databaseConfig from './config/database.config';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
