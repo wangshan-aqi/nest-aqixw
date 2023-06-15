@@ -26,8 +26,7 @@ export class AuthController {
   @UseGuards(AuthGuard('user-name'))
   @Post('userNameLogin')
   async loginForUserName(@Request() req: any): Promise<ISignInUserRes> {
-    const user = await this.authService.login(req.user);
-    return user;
+    return await this.authService.login(req.user);
   }
 
   @UseGuards(AuthGuard('email'))
