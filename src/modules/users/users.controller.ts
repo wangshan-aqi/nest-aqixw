@@ -16,23 +16,25 @@ import {
   HttpCode,
   UseFilters,
   HttpStatus,
-  UseGuards
+  UseGuards,
+  Version,
+  SetMetadata,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { Users } from './entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { Public } from 'src/guard/decorator/jwt-auth.decorator';
 
 @ApiTags('用户')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('signUp')
+  @Public()
   @ApiTags('创建用户')
-  @ApiBody({
-    type: Users
-  })
+  @ApiBody({ type: Users })
+  @Post('signUp')
   async create(@Body() createUserDto: CreateUserDto) {
     switch (createUserDto.registrationMethod) {
       case RegistrationMethod.EMAIL:

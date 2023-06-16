@@ -9,7 +9,7 @@ export class UserNameSignInDto {
   @ApiProperty({
     description: '用户名',
     example: 'admin',
-    required: false
+    required: false,
   })
   @IsString({ message: '用户名必须是字符串' })
   @IsNotEmpty({ message: '用户名不能为空' })
@@ -18,7 +18,7 @@ export class UserNameSignInDto {
 
   @ApiProperty({
     description: '密码',
-    example: '123456'
+    example: '123456',
   })
   @IsString()
   @IsNotEmpty({ message: '密码不能为空' })

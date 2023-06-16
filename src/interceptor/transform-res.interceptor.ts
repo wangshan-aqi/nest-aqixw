@@ -2,7 +2,7 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
-  NestInterceptor
+  NestInterceptor,
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 
@@ -20,9 +20,9 @@ export class TransformResInterceptor implements NestInterceptor {
           statusCode: statusCode || 200,
           data,
           message: '请求成功',
-          cmd: `${method} ${url}`
+          cmd: `${method} ${url}`,
         };
-      })
+      }),
     );
   }
 }

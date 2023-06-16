@@ -20,8 +20,8 @@ import { JwtStrategy } from './guard/jwt.strategy';
     PassportModule.register({}),
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN }
-    })
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
+    }),
   ],
   controllers: [AuthController],
   providers: [
@@ -30,8 +30,8 @@ import { JwtStrategy } from './guard/jwt.strategy';
     UserNameLocalStrategy,
     EmailLocalStrategy,
     TelPhoneLocalStrategy,
-    JwtStrategy
+    JwtStrategy,
   ],
-  exports: [AuthService]
+  exports: [AuthService],
 })
 export class AuthModule {}

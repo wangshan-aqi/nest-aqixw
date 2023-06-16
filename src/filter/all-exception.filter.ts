@@ -2,7 +2,7 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
-  HttpException
+  HttpException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
@@ -26,7 +26,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       data: null, // 返回的数据
       success: false, // 是否请求成功
       path: `${method} - ${url}`, // 请求方式 错误的接口地址
-      timestamp: new Date().toLocaleDateString() // 错误的时间
+      timestamp: new Date().toLocaleDateString(), // 错误的时间
     };
     response.status(status).json(errorResponse); // 返回错误信息
   }

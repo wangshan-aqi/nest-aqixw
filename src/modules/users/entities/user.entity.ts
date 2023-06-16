@@ -3,7 +3,7 @@ import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  QueryBuilder
+  QueryBuilder,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDelete, RegistrationMethod } from '../dto/create-user.dto';
@@ -22,7 +22,7 @@ export class Users {
     length: 11,
     unique: true, // 唯一
     nullable: true, // 可以为空
-    comment: '手机号'
+    comment: '手机号',
   })
   telPhone: string;
 
@@ -31,7 +31,7 @@ export class Users {
     length: 50,
     nullable: true, // 可以为空
     unique: true, // 唯一
-    comment: '邮箱'
+    comment: '邮箱',
   })
   email: string;
 
@@ -39,14 +39,14 @@ export class Users {
     type: 'varchar',
     length: 255,
     nullable: false, // 不可为空
-    comment: '密码'
+    comment: '密码',
   })
   userPassword: string;
   @Column({
     type: 'enum',
     enum: RegistrationMethod,
     default: RegistrationMethod.PHONE,
-    comment: '注册方式'
+    comment: '注册方式',
   })
   registrationMethod: RegistrationMethod;
 
@@ -54,7 +54,7 @@ export class Users {
     type: 'enum',
     enum: IsDelete,
     default: IsDelete.NODELETE,
-    comment: '是否删除'
+    comment: '是否删除',
   })
   isDeleted: IsDelete;
 
@@ -64,7 +64,7 @@ export class Users {
   @Column({
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP'
+    onUpdate: 'CURRENT_TIMESTAMP',
   })
   updateDate: Date;
 

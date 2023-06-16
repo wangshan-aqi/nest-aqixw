@@ -23,7 +23,7 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
       expandVariables: true, // 扩展变量
       validationSchema: undefined, // 验证模式
       validationOptions: undefined, // 验证选项
-      cache: false // 缓存
+      cache: false, // 缓存
     }),
     TypeOrmModule.forRootAsync({
       useFactory: (configService: ConfigService) => {
@@ -37,23 +37,23 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
           database: databaseConfig.database.database,
           // entities: [__dirname + '/**/*.entity{.ts,.js}'],
           autoLoadEntities: true,
-          synchronize: true // 生产环境下不要使用
+          synchronize: true, // 生产环境下不要使用
         };
       },
-      inject: [ConfigService]
+      inject: [ConfigService],
     }),
     UsersModule,
     UsauthModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard
-    }
-  ]
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

@@ -8,13 +8,13 @@ import { AuthService } from '../auth.service';
 @Injectable()
 export class TelPhoneLocalStrategy extends PassportStrategy(
   Strategy,
-  'tel-phone'
+  'tel-phone',
 ) {
   constructor(private readonly authService: AuthService) {
     super({
       // 用于验证的字段
       usernameField: 'telPhone',
-      passwordField: 'userPassword'
+      passwordField: 'userPassword',
     });
   }
 
@@ -22,7 +22,7 @@ export class TelPhoneLocalStrategy extends PassportStrategy(
     const user = await this.authService.validateUser(
       RegistrationMethod.PHONE,
       username,
-      pass
+      pass,
     );
     if (!user) {
       throw new UnauthorizedException();

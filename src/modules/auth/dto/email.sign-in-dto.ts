@@ -4,7 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  ValidateIf
+  ValidateIf,
 } from 'class-validator';
 import { RegistrationMethod } from 'src/modules/users/dto/create-user.dto';
 import { IsCustomPhone } from 'src/shard/custom-validation/is-custom-phone.decorator';
@@ -15,7 +15,7 @@ export class EmailSignInDto {
   @ApiProperty({
     description: '邮箱',
     example: 'aaa@qq.com',
-    required: false
+    required: false,
   })
   @IsString({ message: '邮箱必须是字符串' })
   @IsNotEmpty({ message: '邮箱不能为空' })
@@ -25,7 +25,7 @@ export class EmailSignInDto {
 
   @ApiProperty({
     description: '密码',
-    example: '123456'
+    example: '123456',
   })
   @IsString()
   @IsNotEmpty({ message: '密码不能为空' })

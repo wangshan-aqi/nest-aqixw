@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  UnauthorizedException
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -13,13 +13,13 @@ import { ISignInUserRes } from './interface/res.interface';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(
     type: RegistrationMethod,
     username: string,
-    pass: string
+    pass: string,
   ): Promise<any> {
     const user = await this.usersService.findOneUserExist(type, username);
     /** 检查用户是否存在 */
@@ -27,7 +27,7 @@ export class AuthService {
     /** 检查密码和数据库中的密码是否匹配 返回布尔值 */
     const passwordValid = await bcrypt.compare(
       pass, // 用户输入的密码
-      user.userPassword // 数据库中的密码
+      user.userPassword, // 数据库中的密码
     );
     /** 检查密码是否有效 */
     if (!passwordValid) {
@@ -48,7 +48,7 @@ export class AuthService {
       userId: user.userId,
       userName: user.userName,
       access_token: this.signToken(user), // 生成token
-      refresh_token: this.signRefreshToken(user) // 生成RefreshToken
+      refresh_token: this.signRefreshToken(user), // 生成RefreshToken
     };
   }
 
@@ -57,7 +57,7 @@ export class AuthService {
     const payload = { username: user.userName, sub: user.userId };
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: 360 // 过期时间
+      expiresIn: 360, // 过期时间
     });
   }
 
@@ -66,11 +66,11 @@ export class AuthService {
     const payload = {
       type: 'refresh',
       username: user.userName,
-      sub: user.userId
+      sub: user.userId,
     };
     return this.jwtService.sign(payload, {
       secret: process.env.REFRESH_TOKEN_SECRET, // 密钥
-      expiresIn: process.env.REFRESH_TOKEN_TTL // 过期时间
+      expiresIn: process.env.REFRESH_TOKEN_TTL, // 过期时间
     });
   }
 }

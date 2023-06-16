@@ -3,7 +3,7 @@ import {
   ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
-  registerDecorator
+  registerDecorator,
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'customPhone', async: false })
@@ -22,7 +22,7 @@ export function IsCustomPhone(validationOptions?: ValidationOptions) {
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      validator: CustomPhoneConstraint
+      validator: CustomPhoneConstraint,
     });
   };
 }

@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 export class UsersService {
   constructor(
     @InjectRepository(Users)
-    private readonly usersRepository: Repository<Users>
+    private readonly usersRepository: Repository<Users>,
   ) {}
   /** 邮箱注册 */
   async createUsersForEmail(createUserDto: CreateUserDto): Promise<number> {
@@ -51,7 +51,7 @@ export class UsersService {
   // 根据id查询用户
   async findOne(id: number): Promise<any> {
     const res = await this.usersRepository.findOne({
-      where: { userId: id }
+      where: { userId: id },
     });
     const { userPassword, ...result } = res;
     console.log(result);
@@ -62,13 +62,13 @@ export class UsersService {
   // 查询用户是否存在
   async findOneUserExist(
     type: RegistrationMethod,
-    lable: string
+    lable: string,
   ): Promise<Users> {
     let res = null;
     const searchMap = {
       [RegistrationMethod.EMAIL]: { email: lable },
       [RegistrationMethod.PHONE]: { telPhone: lable },
-      [RegistrationMethod.USER_NAME]: { userName: lable }
+      [RegistrationMethod.USER_NAME]: { userName: lable },
     };
     switch (type) {
       case RegistrationMethod.EMAIL:
@@ -99,26 +99,26 @@ export class UsersService {
     const searchMap = {
       [RegistrationMethod.EMAIL]: { email: payload.email },
       [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
-      [RegistrationMethod.USER_NAME]: { userName: payload.userName }
+      [RegistrationMethod.USER_NAME]: { userName: payload.userName },
     };
 
     let res = null;
     switch (payload.registrationMethod) {
       case RegistrationMethod.EMAIL:
         res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod]
+          searchMap[payload.registrationMethod],
         );
         if (res) this.errorFun('邮箱已注册');
         break;
       case RegistrationMethod.PHONE:
         res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod]
+          searchMap[payload.registrationMethod],
         );
         if (res) this.errorFun('手机号已注册');
         break;
       case RegistrationMethod.USER_NAME:
         res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod]
+          searchMap[payload.registrationMethod],
         );
         if (res) this.errorFun('用户名已注册');
         break;

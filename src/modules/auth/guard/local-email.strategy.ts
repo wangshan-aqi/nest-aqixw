@@ -12,7 +12,7 @@ export class EmailLocalStrategy extends PassportStrategy(Strategy, 'email') {
     super({
       // 用于验证的字段
       usernameField: 'email',
-      passwordField: 'userPassword'
+      passwordField: 'userPassword',
     });
   }
 
@@ -20,7 +20,7 @@ export class EmailLocalStrategy extends PassportStrategy(Strategy, 'email') {
     const user = await this.authService.validateUser(
       RegistrationMethod.EMAIL,
       username,
-      pass
+      pass,
     );
     if (!user) {
       throw new UnauthorizedException();

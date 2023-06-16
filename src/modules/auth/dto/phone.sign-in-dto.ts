@@ -8,7 +8,7 @@ export class TelPhoneSignInDto {
   @ApiProperty({
     description: '手机号',
     example: '18888888888',
-    required: false
+    required: false,
   })
   @IsString({ message: '手机号必须是字符串' })
   @IsNotEmpty({ message: '手机号不能为空' })
@@ -17,7 +17,7 @@ export class TelPhoneSignInDto {
 
   @ApiProperty({
     description: '密码',
-    example: '123456'
+    example: '123456',
   })
   @IsString()
   @IsNotEmpty({ message: '密码不能为空' })
