@@ -8,10 +8,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { Sign } from 'crypto';
-import { UserNameSignInDto } from './dto/name.sign-in-dto';
-import { EmailSignInDto } from './dto/email.sign-in-dto';
-import { TelPhoneSignInDto } from './dto/phone.sign-in-dto';
 import { Public } from 'src/guard/decorator/jwt-auth.decorator';
 import { ISignInUserRes } from './interface/res.interface';
 
