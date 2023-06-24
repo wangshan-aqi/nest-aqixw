@@ -12,6 +12,7 @@ import { UserNameLocalStrategy } from './guard/local-name.strategy';
 import { EmailLocalStrategy } from './guard/local-email.strategy';
 import { TelPhoneLocalStrategy } from './guard/local-phone.strategy';
 import { JwtStrategy } from './guard/jwt.strategy';
+import { ToolService } from 'src/common/tool.service';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { JwtStrategy } from './guard/jwt.strategy';
     EmailLocalStrategy,
     TelPhoneLocalStrategy,
     JwtStrategy,
+    ToolService,
   ],
   exports: [AuthService],
 })

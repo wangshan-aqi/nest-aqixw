@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { HttpExceptionFilter } from './filter/all-exception.filter';
 import { TransformResInterceptor } from './interceptor/transform-res.interceptor';
+import * as session from 'express-session';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,17 @@ async function bootstrap() {
   //   type: VersioningType.MEDIA_TYPE,
   //   key: 'v=',
   // });
+
+  app.use(
+    session({
+      secret: process.env.SESSION_KEY, // session 密钥
+      resave: false, // 是否重新保存session
+      saveUninitialized: false, // 是否保存未初始化的session
+      cookie: {
+        secure: false,
+      },
+    }),
+  );
 
   const port = app.get(ConfigService).get('port');
   const config = new DocumentBuilder()

@@ -83,8 +83,17 @@ export class CreateUserDto {
   @MinLength(6, { message: '密码长度不能小于6位' })
   @MaxLength(18, { message: '密码长度不能大于18位' })
   @IsNotEmpty({ message: '密码不能为空' })
-  @IsString()
+  @IsString({ message: '密码必须是字符串' })
   userPassword: string;
+
+  @ApiProperty({
+    description: '验证码',
+    example: 0,
+    enum: RegistrationMethod,
+    required: false,
+  })
+  @IsNotEmpty({ message: '验证码不能为空' })
+  code: string;
 
   @ApiProperty({
     description: '注册方式',

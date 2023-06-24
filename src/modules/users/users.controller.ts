@@ -19,6 +19,8 @@ import {
   UseGuards,
   Version,
   SetMetadata,
+  Session,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
@@ -35,7 +37,12 @@ export class UsersController {
   @ApiTags('创建用户')
   @ApiBody({ type: Users })
   @Post('signUp')
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @Session() session,
+    @Req() req,
+  ) {
+    //验证验证码，由前端传递过来
     switch (createUserDto.registrationMethod) {
       case RegistrationMethod.EMAIL:
         return await this.usersService.createUsersForEmail(createUserDto);
