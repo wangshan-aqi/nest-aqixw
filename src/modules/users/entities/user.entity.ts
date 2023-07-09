@@ -1,10 +1,4 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  QueryBuilder,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, QueryBuilder } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDelete, RegistrationMethod } from '../dto/create-user.dto';
 import { BcryptService } from '../../../common/bcrypt.service';

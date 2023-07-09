@@ -2,12 +2,12 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum AuthType {
   MENU = '0',
-  BUTTON = '1'
+  BUTTON = '1',
 }
 
 export enum IsDelete {
   DELETE = '0',
-  NODELETE = '1'
+  NODELETE = '1',
 }
 
 @Entity()
@@ -36,7 +36,7 @@ export class Usauth {
   @Column({
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP'
+    onUpdate: 'CURRENT_TIMESTAMP',
   })
   update_time: Date;
 }

@@ -30,10 +30,7 @@ export class AuthController {
   // @Public()
   @UseGuards(AuthGuard('user-name'))
   @Post('userNameLogin')
-  async loginForUserName(
-    @Req() req: any,
-    @Session() session,
-  ): Promise<ISignInUserRes> {
+  async loginForUserName(@Req() req: any, @Session() session): Promise<ISignInUserRes> {
     return await this.authService.login(req.user);
   }
 
@@ -51,11 +48,7 @@ export class AuthController {
 
   @Public()
   @Get('authCode/:id') // 获取验证码
-  async getAuthCode(
-    @Req() req: Request,
-    @Param('id') id: string,
-    @Res() res: any,
-  ) {
+  async getAuthCode(@Req() req: Request, @Param('id') id: string, @Res() res: any) {
     const svgCaptcha = await this.toolService.captchaCode();
     res.type('image/svg+xml'); // 响应的类型
     res.send(svgCaptcha.data);

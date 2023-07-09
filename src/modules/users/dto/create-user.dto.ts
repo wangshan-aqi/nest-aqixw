@@ -19,6 +19,10 @@ export enum IsDelete {
   DELETE = 0,
   NODELETE = 1,
 }
+export enum CanModify {
+  MODIFY = 0,
+  NOMODIFY = 1,
+}
 
 export enum Gander {
   '男' = 0,
@@ -43,9 +47,7 @@ export class CreateUserDto {
     description: '用户名',
     example: 'admin',
   })
-  @ValidateIf(
-    o => o.registrationMethod === RegistrationMethod.USER_NAME && !o.userName,
-  )
+  @ValidateIf(o => o.registrationMethod === RegistrationMethod.USER_NAME && !o.userName)
   @MaxLength(50, { message: '用户名长度不能大于50位' })
   @MinLength(2, { message: '用户名长度不能小于2位' })
   @IsString({ message: '用户名必须是字符串' })
@@ -57,9 +59,7 @@ export class CreateUserDto {
     example: '18888888888',
   })
   @IsCustomPhone({ message: '手机号格式不正确' })
-  @ValidateIf(
-    o => o.registrationMethod === RegistrationMethod.PHONE && !o.telPhone,
-  )
+  @ValidateIf(o => o.registrationMethod === RegistrationMethod.PHONE && !o.telPhone)
   @IsString({ message: '手机号必须是字符串' })
   @IsNotEmpty({ message: '手机号不能为空' })
   telPhone: string;
@@ -69,9 +69,7 @@ export class CreateUserDto {
     example: 'aaaa@bb.com',
   })
   @IsCustomEmail({ message: '邮箱格式不正确' })
-  @ValidateIf(
-    o => o.registrationMethod === RegistrationMethod.EMAIL && !o.email,
-  )
+  @ValidateIf(o => o.registrationMethod === RegistrationMethod.EMAIL && !o.email)
   @IsString({ message: '邮箱必须是字符串' })
   @IsNotEmpty({ message: '邮箱不能为空' })
   email: string;

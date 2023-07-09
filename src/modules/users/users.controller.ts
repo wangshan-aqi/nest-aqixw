@@ -37,18 +37,13 @@ export class UsersController {
   @ApiTags('创建用户')
   @ApiBody({ type: Users })
   @Post('signUp')
-  async create(
-    @Body() createUserDto: CreateUserDto,
-    @Session() session,
-    @Req() req,
-  ) {
+  async create(@Body() createUserDto: CreateUserDto, @Session() session, @Req() req) {
     //验证验证码，由前端传递过来
     switch (createUserDto.registrationMethod) {
       case RegistrationMethod.EMAIL:
         return await this.usersService.createUsersForEmail(createUserDto);
       case RegistrationMethod.PHONE:
-        const res = await this.usersService.createUsersForPhone(createUserDto);
-        return res;
+        return await this.usersService.createUsersForPhone(createUserDto);
       case RegistrationMethod.USER_NAME:
         return await this.usersService.createUsersForUserName(createUserDto);
       default:

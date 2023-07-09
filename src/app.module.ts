@@ -11,6 +11,7 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { MenuListModule } from './modules/menu-list/menu-list.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
     UsersModule,
     UsauthModule,
     AuthModule,
+    MenuListModule,
   ],
   controllers: [AppController],
   providers: [

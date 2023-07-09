@@ -60,10 +60,7 @@ export class UsersService {
   }
 
   // 查询用户是否存在
-  async findOneUserExist(
-    type: RegistrationMethod,
-    lable: string,
-  ): Promise<Users> {
+  async findOneUserExist(type: RegistrationMethod, lable: string): Promise<Users> {
     let res = null;
     const searchMap = {
       [RegistrationMethod.EMAIL]: { email: lable },
@@ -105,21 +102,15 @@ export class UsersService {
     let res = null;
     switch (payload.registrationMethod) {
       case RegistrationMethod.EMAIL:
-        res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod],
-        );
+        res = await this.usersRepository.findOneBy(searchMap[payload.registrationMethod]);
         if (res) this.errorFun('邮箱已注册');
         break;
       case RegistrationMethod.PHONE:
-        res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod],
-        );
+        res = await this.usersRepository.findOneBy(searchMap[payload.registrationMethod]);
         if (res) this.errorFun('手机号已注册');
         break;
       case RegistrationMethod.USER_NAME:
-        res = await this.usersRepository.findOneBy(
-          searchMap[payload.registrationMethod],
-        );
+        res = await this.usersRepository.findOneBy(searchMap[payload.registrationMethod]);
         if (res) this.errorFun('用户名已注册');
         break;
     }

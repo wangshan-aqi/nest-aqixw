@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { RegistrationMethod } from '../users/dto/create-user.dto';
@@ -16,11 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    type: RegistrationMethod,
-    username: string,
-    pass: string,
-  ): Promise<any> {
+  async validateUser(type: RegistrationMethod, username: string, pass: string): Promise<any> {
     const user = await this.usersService.findOneUserExist(type, username);
     /** 检查用户是否存在 */
     if (!user) throw new BadRequestException(`${username}用户未注册`);
@@ -57,7 +49,7 @@ export class AuthService {
     const payload = { username: user.userName, sub: user.userId };
     return this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: 360, // 过期时间
+      expiresIn: process.env.JWT_ACCESS_TOKEN_TTL + 's', // 过期时间
     });
   }
 
