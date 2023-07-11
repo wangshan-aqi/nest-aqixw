@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { decryptedText } from 'src/shard/constant';
 
 @Injectable()
 export class UsersService {
@@ -94,9 +95,9 @@ export class UsersService {
   /** 根据手机号/邮箱/用户名查询用户 */
   async findOneByUser(payload: CreateUserDto, message: string): Promise<Users> {
     const searchMap = {
-      [RegistrationMethod.EMAIL]: { email: payload.email },
-      [RegistrationMethod.PHONE]: { telPhone: payload.telPhone },
-      [RegistrationMethod.USER_NAME]: { userName: payload.userName },
+      [RegistrationMethod.EMAIL]: { email: decryptedText(payload.email) },
+      [RegistrationMethod.PHONE]: { telPhone: decryptedText(payload.telPhone) },
+      [RegistrationMethod.USER_NAME]: { userName: decryptedText(payload.userName) },
     };
 
     let res = null;

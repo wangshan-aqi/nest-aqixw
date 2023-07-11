@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { RegistrationMethod } from '../users/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ISignInUserRes } from './interface/res.interface';
+import { decryptedText } from 'src/shard/constant';
 
 @Injectable()
 export class AuthService {
@@ -13,9 +14,10 @@ export class AuthService {
   ) {}
 
   async validateUser(type: RegistrationMethod, username: string, pass: string): Promise<any> {
+    if (!username || !pass) throw new BadRequestException('用户名或密码不能为空');
     const user = await this.usersService.findOneUserExist(type, username);
     /** 检查用户是否存在 */
-    if (!user) throw new BadRequestException(`${username}用户未注册`);
+    if (!user) throw new BadRequestException(`用户未注册`);
     /** 检查密码和数据库中的密码是否匹配 返回布尔值 */
     const passwordValid = await bcrypt.compare(
       pass, // 用户输入的密码
