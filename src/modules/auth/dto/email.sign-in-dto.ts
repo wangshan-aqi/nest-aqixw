@@ -1,11 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  ValidateIf,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateIf } from 'class-validator';
 import { RegistrationMethod } from 'src/modules/users/dto/create-user.dto';
 import { IsCustomPhone } from 'src/shard/custom-validation/is-custom-phone.decorator';
 import { IsCustomEmail } from 'src/shard/custom-validation/is-custon-email.decorator';

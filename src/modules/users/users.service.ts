@@ -62,6 +62,7 @@ export class UsersService {
 
   // 查询用户是否存在
   async findOneUserExist(type: RegistrationMethod, lable: string): Promise<Users> {
+    console.log(type, 'type');
     let res = null;
     const searchMap = {
       [RegistrationMethod.EMAIL]: { email: lable },

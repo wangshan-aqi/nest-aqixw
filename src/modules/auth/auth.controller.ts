@@ -16,12 +16,14 @@ import { Public } from 'src/guard/decorator/jwt-auth.decorator';
 import { ISignInUserRes } from './interface/res.interface';
 import { ToolService } from 'src/common/tool.service';
 import { Request, Response } from 'express';
+import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Controller('auth')
 // 设置路由是否公开 - 数组中的值为路由名称 - 与路由名称相同的路由将不会被 jwt-auth.guard.ts 拦截
 @SetMetadata('isPublic', ['userNameLogin', 'emailLogin', 'telPhoneLogin'])
 export class AuthController {
   constructor(
+    @InjectRedis() private readonly redis: Redis,
     private readonly authService: AuthService,
     private readonly toolService: ToolService,
   ) {}
@@ -30,13 +32,15 @@ export class AuthController {
   // @Public()
   @UseGuards(AuthGuard('user-name'))
   @Post('userNameLogin')
-  async loginForUserName(@Req() req: any, @Session() session): Promise<ISignInUserRes> {
+  async loginForUserName(@Req() req: any): Promise<ISignInUserRes> {
     return await this.authService.login(req.user);
   }
 
   @UseGuards(AuthGuard('email'))
   @Post('emailLogin')
   async loginForEmail(@Req() req: any): Promise<ISignInUserRes> {
+    console.log(req, 'req.user');
+
     return await this.authService.login(req.user);
   }
 

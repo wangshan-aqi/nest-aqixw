@@ -2,12 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import {
-  BadRequestException,
-  HttpStatus,
-  ValidationPipe,
-  VersioningType,
-} from '@nestjs/common';
+import { BadRequestException, HttpStatus, ValidationPipe, VersioningType } from '@nestjs/common';
 import { HttpExceptionFilter } from './filter/all-exception.filter';
 import { TransformResInterceptor } from './interceptor/transform-res.interceptor';
 import * as session from 'express-session';
@@ -43,7 +38,7 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
-    allowedHeaders: 'Content-Type, Accept',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
   }); // 允许跨域
 
   app.useGlobalPipes(

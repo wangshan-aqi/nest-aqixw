@@ -3,6 +3,7 @@ import { Strategy } from 'passport-local';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../auth.service';
+import { decryptedText } from 'src/shard/constant';
 
 // 本地策略 - 手机号
 @Injectable()
@@ -15,8 +16,14 @@ export class TelPhoneLocalStrategy extends PassportStrategy(Strategy, 'tel-phone
     });
   }
 
-  async validate(username: string, pass: string): Promise<any> {
-    const user = await this.authService.validateUser(RegistrationMethod.PHONE, username, pass);
+  async validate(telPhone: string, pass: string): Promise<any> {
+    const decryptTelPhone = decryptedText(telPhone);
+    const decryptPass = decryptedText(pass);
+    const user = await this.authService.validateUser(
+      RegistrationMethod.PHONE,
+      decryptTelPhone,
+      decryptPass,
+    );
     if (!user) {
       throw new UnauthorizedException();
     }
