@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, Matches, MaxLength, IsOptional } from 'class-validator';
 import { CanModify, IsDelete } from 'src/modules/users/dto/create-user.dto';
+import { Role } from '../interface/models';
 
 @Entity()
 export class MenuList {
@@ -34,8 +35,12 @@ export class MenuList {
   @IsOptional()
   parentId: number;
 
-  @Column()
-  @ApiProperty({ description: '角色权限关系' })
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.SUPER_ADMIN,
+  })
+  @ApiProperty({ description: '角色权限' })
   rolePermissions: string;
 
   @Column()

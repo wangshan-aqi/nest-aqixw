@@ -69,8 +69,19 @@ export class MenuListService {
     }
   }
 
-  update(id: number, updateMenuListDto: UpdateMenuListDto) {
-    return `This action updates a #${id} menuList`;
+  async update(id: number, updateMenuListDto: UpdateMenuListDto) {
+    const isExist = await this.menuListRepository.findOne({
+      where: { menuId: id },
+    });
+
+    if (isExist) {
+      const updateData = {
+        ...isExist,
+        updateMenuListDto,
+      };
+      return this.menuListRepository.save(updateData);
+    }
+    throw new HttpException('菜单不存在', HttpStatus.BAD_REQUEST);
   }
 
   remove(id: number) {

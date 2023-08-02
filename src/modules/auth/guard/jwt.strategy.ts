@@ -17,7 +17,15 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     const cache_access_token = await this.redis.get(`user:${user.sub}`);
 
     const access_token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-    if (cache_access_token !== access_token) {
+    if (cache_access_token) {
+      const cache = decodeURIComponent(cache_access_token);
+      // console.log(cache, 'cache');
+    }
+    if (access_token) {
+      const token = decodeURIComponent(access_token);
+      // console.log(access_token, 'access_token');
+    }
+    if (cache_access_token && cache_access_token !== access_token) {
       throw new ForbiddenException('token令牌无效');
     }
 
