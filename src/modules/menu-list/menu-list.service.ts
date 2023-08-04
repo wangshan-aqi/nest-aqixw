@@ -17,26 +17,20 @@ export class MenuListService {
       menuName,
       routeName,
       routePath,
-      componentPath,
-      routeIcon,
+      filePath,
+      icon,
       parentId,
-      rolePermissions,
-      buttonPermissions,
-      // isDelete,
-      description,
-      // canModify,
+      roleCode,
+      //  canModify
     } = createMenuListDto;
     const menuList = new MenuList();
     menuList.menuName = menuName;
     menuList.routeName = routeName;
     menuList.routePath = routePath;
-    menuList.componentPath = componentPath;
-    menuList.routeIcon = routeIcon;
+    menuList.filePath = filePath;
+    menuList.icon = icon;
     menuList.parentId = parentId;
-    menuList.rolePermissions = rolePermissions;
-    menuList.buttonPermissions = buttonPermissions;
-    // menuList.isDelete = isDelete;
-    menuList.description = description;
+    menuList.roleCode = roleCode;
     // menuList.canModify = canModify;
     if (parentId === null) {
       menuList.parentId = 0;
@@ -61,7 +55,7 @@ export class MenuListService {
 
   async findOne(id: number) {
     const res = await this.menuListRepository.findOne({
-      where: { menuId: id },
+      where: { id },
     });
     if (res) {
       const { isDelete, ...result } = res;
@@ -71,7 +65,7 @@ export class MenuListService {
 
   async update(id: number, updateMenuListDto: UpdateMenuListDto) {
     const isExist = await this.menuListRepository.findOne({
-      where: { menuId: id },
+      where: { id },
     });
 
     if (isExist) {

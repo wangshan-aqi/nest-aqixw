@@ -25,27 +25,22 @@ export class CreateMenuListDto {
   routePath: string;
 
   @IsString({ message: '组件路径必须为字符串' })
-  componentPath: string;
+  filePath: string;
 
   @IsString({ message: '路由图标必须为字符串' })
-  routeIcon: string;
+  icon: string;
 
   @IsNumber()
   @IsOptional()
   parentId: number;
 
   @IsString({ message: '角色权限关系必须为字符串' })
-  rolePermissions: string;
-
-  @IsString({ message: '按钮权限关系必须为字符串' })
-  buttonPermissions: string;
-
-  //   @IsBoolean({ message: '是否可删除必须为布尔值' })
-  //   isDelete: boolean;
+  roleCode: string;
 
   @IsString({ message: '路由描述必须为字符串' })
   description: string;
 
-  //   @IsBoolean({ message: '是否可修改必须为布尔值' })
-  //   canModify: boolean;
+  // @IsBoolean({ message: '是否可修改必须为数字枚举' })
+  // @Matches(/^[0-1]$/, { message: '是否可修改必须为数字枚举' })
+  // canModify: number;
 }

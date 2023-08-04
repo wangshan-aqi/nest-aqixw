@@ -6,9 +6,9 @@ import { Role } from '../interface/models';
 
 @Entity()
 export class MenuList {
-  @PrimaryGeneratedColumn()
-  @ApiProperty({ description: 'menuId菜单id' })
-  menuId: number;
+  @PrimaryGeneratedColumn('uuid')
+  @ApiProperty({ description: '菜单id' })
+  id: number;
 
   @Column()
   @ApiProperty({ description: '菜单名称', example: '首页' })
@@ -24,11 +24,11 @@ export class MenuList {
 
   @Column()
   @ApiProperty({ description: '组件路径' })
-  componentPath: string;
+  filePath: string;
 
   @Column({ nullable: true })
   @ApiProperty({ description: '路由图标' })
-  routeIcon: string;
+  icon: string;
 
   @Column({ nullable: true, default: 0 })
   @ApiProperty({ description: '父级id' })
@@ -41,11 +41,7 @@ export class MenuList {
     default: Role.SUPER_ADMIN,
   })
   @ApiProperty({ description: '角色权限' })
-  rolePermissions: string;
-
-  @Column()
-  @ApiProperty({ description: '按钮权限关系' })
-  buttonPermissions: string;
+  roleCode: string;
 
   @Column({
     type: 'enum',
@@ -54,10 +50,6 @@ export class MenuList {
   })
   @ApiProperty({ description: '是否可删除' })
   isDelete: IsDelete;
-
-  @Column()
-  @ApiProperty({ description: '路由描述' })
-  description: string;
 
   @Column({ nullable: true, default: () => 'CURRENT_TIMESTAMP', comment: '路由创建时间' })
   @ApiProperty({ description: '路由创建时间' })
