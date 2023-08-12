@@ -1,9 +1,14 @@
 // role.enum.ts
 export enum Role {
-  SUPER_ADMIN = '超级管理员',
-  ADMIN = '管理员',
-  USER = '用户',
+  SUPER_ADMIN = 0,
+  ADMIN = 1,
+  USER = 2,
 }
+// export enum Role {
+//   SUPER_ADMIN = '超级管理员',
+//   ADMIN = '管理员',
+//   USER = '用户',
+// }
 
 // permission.enum.ts
 export enum Permission {

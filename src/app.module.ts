@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Logger, MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,11 +6,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import configuration from './config/configuration';
 import databaseConfig from './config/database.config';
 import { LoggerMiddleware } from './middleware/logger.middleware';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { ModulesModule } from './modules/modules.module';
 import { RedisModule } from '@nestjs-modules/ioredis';
 import redisConfig from './config/redis.config';
+import { ValidationPipe } from './pipe/Validation.pipe';
 
 @Module({
   imports: [
@@ -69,10 +70,14 @@ import redisConfig from './config/redis.config';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
   ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply().forRoutes('*');
   }
 }

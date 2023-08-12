@@ -1,15 +1,16 @@
+import { FindMenuListDto } from './dto/find-menu-list.dto';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMenuListDto } from './dto/create-menu-list.dto';
 import { UpdateMenuListDto } from './dto/update-menu-list.dto';
-import { MenuList } from './entities/menu-list.entity';
+import { MenuListEntity } from './entities/menu-list.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class MenuListService {
   constructor(
-    @InjectRepository(MenuList)
-    private readonly menuListRepository: Repository<MenuList>,
+    @InjectRepository(MenuListEntity)
+    private readonly menuListRepository: Repository<MenuListEntity>,
   ) {}
 
   async create(createMenuListDto: CreateMenuListDto) {
@@ -21,36 +22,67 @@ export class MenuListService {
       icon,
       parentId,
       roleCode,
-      //  canModify
+      order,
+      isModifiable,
     } = createMenuListDto;
-    const menuList = new MenuList();
-    menuList.menuName = menuName;
-    menuList.routeName = routeName;
-    menuList.routePath = routePath;
-    menuList.filePath = filePath;
-    menuList.icon = icon;
-    menuList.parentId = parentId;
-    menuList.roleCode = roleCode;
-    // menuList.canModify = canModify;
+    // console.log(createMenuListDto);
+
+    const menuItem = new MenuListEntity();
+    menuItem.menuName = menuName;
+    menuItem.routeName = routeName;
+    menuItem.routePath = routePath;
+    menuItem.filePath = filePath;
+    menuItem.icon = icon;
+    menuItem.parentId = parentId;
+    menuItem.roleCode = roleCode;
+    menuItem.order = order;
+    menuItem.isModifiable = isModifiable;
     if (parentId === null) {
-      menuList.parentId = 0;
+      menuItem.parentId = 0;
     }
 
     const isExist = await this.menuListRepository.findOne({
       where: { menuName },
     });
-    console.log(isExist);
+    console.log(isExist, 'isExist');
 
     if (isExist) {
       throw new HttpException('菜单名称已存在', HttpStatus.BAD_REQUEST);
     }
-    return await this.menuListRepository.save(menuList);
+    await this.menuListRepository.save(menuItem);
+    return {
+      code: 200,
+      message: '创建成功',
+    };
   }
 
-  async findAll() {
+  async findAll(findMenuListDto): Promise<any> {
+    const { page, pageSize } = findMenuListDto;
+    const menuQueryBuilder = await this.menuListRepository.createQueryBuilder('menu_list');
+    const [items, total] = await menuQueryBuilder
+      .select()
+      .where('menu_list.isDelete = :isDelete', { isDelete: 1 })
+      .skip((page - 1) * pageSize)
+      .take(pageSize)
+      .getManyAndCount();
+    return {
+      items,
+      total,
+    };
+  }
+  async findMenuParentsAll() {
     const res = await this.menuListRepository.find();
-
-    return res;
+    if (res.length > 0) {
+      const parents = res.map(item => {
+        return {
+          id: item.id,
+          name: item.menuName,
+        };
+      });
+      return parents;
+    } else {
+      return [];
+    }
   }
 
   async findOne(id: number) {

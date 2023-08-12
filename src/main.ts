@@ -6,6 +6,7 @@ import { BadRequestException, HttpStatus, ValidationPipe, VersioningType } from 
 import { HttpExceptionFilter } from './filter/all-exception.filter';
 import { TransformResInterceptor } from './interceptor/transform-res.interceptor';
 import * as session from 'express-session';
+import { RequestInterceptor } from './interceptor/request.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -44,7 +45,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // 自动转换类型 例如：@IsString() name: string; 会自动转换name为string类型
-      whitelist: true, // 白名单 会过滤掉非白名单的属性 例如：@IsString() name: string; 会过滤掉name属性 因为name不是string类型 会报错 但是不会返回给前端 会直接过滤掉
+      // whitelist: true, // 白名单 会过滤掉非白名单的属性 例如：@IsString() name: string; 会过滤掉name属性 因为name不是string类型 会报错 但是不会返回给前端 会直接过滤掉
       forbidNonWhitelisted: true, // 禁止非白名单 会报错 例如：@IsString() name: string; 会报错 因为name不是string类型
       transformOptions: {
         enableImplicitConversion: false, // 启用隐式转换
@@ -79,7 +80,8 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
+  // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER))  //  全局替换日志系统
+  app.useGlobalInterceptors(new RequestInterceptor()); //  对全局的接口 请求 进行日志记录
   await app.listen(port);
 }
 bootstrap();

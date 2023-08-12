@@ -55,7 +55,7 @@ export class UsersService {
       where: { userId: id },
     });
     const { userPassword, ...result } = res;
-    console.log(result);
+    // console.log(result);
 
     return result;
   }

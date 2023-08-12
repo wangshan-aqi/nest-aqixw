@@ -19,7 +19,7 @@ export enum IsDelete {
   DELETE = 0,
   NODELETE = 1,
 }
-export enum CanModify {
+export enum Modifiable {
   MODIFY = 0,
   NOMODIFY = 1,
 }

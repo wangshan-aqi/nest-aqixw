@@ -7,7 +7,10 @@ import {
   IsNotEmpty,
   MaxLength,
   IsOptional,
+  IsEnum,
 } from 'class-validator';
+import { Modifiable } from 'src/modules/users/dto/create-user.dto';
+import { Role } from '../interface/models';
 export class CreateMenuListDto {
   @IsString({ message: '菜单名称必须为字符串' })
   @Matches(/^[\u4e00-\u9fa5]+$/, { message: '菜单名称必须为中文' })
@@ -22,25 +25,30 @@ export class CreateMenuListDto {
   routeName: string;
 
   @IsString({ message: '路由路径必须为字符串' })
+  @IsNotEmpty()
   routePath: string;
 
   @IsString({ message: '组件路径必须为字符串' })
+  @IsNotEmpty()
   filePath: string;
 
   @IsString({ message: '路由图标必须为字符串' })
+  @IsOptional()
   icon: string;
 
   @IsNumber()
   @IsOptional()
   parentId: number;
 
-  @IsString({ message: '角色权限关系必须为字符串' })
-  roleCode: string;
+  @IsNotEmpty()
+  @IsEnum(Role, { message: '角色必须是枚举值' })
+  roleCode: number;
 
-  @IsString({ message: '路由描述必须为字符串' })
-  description: string;
+  @IsNumber()
+  @IsOptional()
+  order: number;
 
-  // @IsBoolean({ message: '是否可修改必须为数字枚举' })
-  // @Matches(/^[0-1]$/, { message: '是否可修改必须为数字枚举' })
-  // canModify: number;
+  @IsEnum(Modifiable, { message: '是否可修改必须为数字枚举' })
+  @IsNotEmpty()
+  isModifiable: number;
 }

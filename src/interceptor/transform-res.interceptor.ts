@@ -1,9 +1,4 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
 
 /** 返回数据拦截器 - 统一处理返回数据格式 */
@@ -19,7 +14,7 @@ export class TransformResInterceptor implements NestInterceptor {
         return {
           statusCode: statusCode || 200,
           data,
-          message: '请求成功',
+          message: data.msg,
           cmd: `${method} ${url}`,
         };
       }),

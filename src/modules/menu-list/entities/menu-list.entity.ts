@@ -1,12 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, Matches, MaxLength, IsOptional } from 'class-validator';
-import { CanModify, IsDelete } from 'src/modules/users/dto/create-user.dto';
+import { Modifiable, IsDelete } from 'src/modules/users/dto/create-user.dto';
 import { Role } from '../interface/models';
 
-@Entity()
-export class MenuList {
-  @PrimaryGeneratedColumn('uuid')
+@Entity('menu_list')
+export class MenuListEntity {
+  @PrimaryGeneratedColumn()
   @ApiProperty({ description: '菜单id' })
   id: number;
 
@@ -30,10 +30,14 @@ export class MenuList {
   @ApiProperty({ description: '路由图标' })
   icon: string;
 
-  @Column({ nullable: true, default: 0 })
+  @Column({ nullable: true, default: '0' })
   @ApiProperty({ description: '父级id' })
   @IsOptional()
   parentId: number;
+
+  @Column({ nullable: true, default: 0 })
+  @ApiProperty({ description: '序号' })
+  order: number;
 
   @Column({
     type: 'enum',
@@ -41,14 +45,14 @@ export class MenuList {
     default: Role.SUPER_ADMIN,
   })
   @ApiProperty({ description: '角色权限' })
-  roleCode: string;
+  roleCode: Role;
 
   @Column({
     type: 'enum',
     enum: IsDelete,
     default: IsDelete.NODELETE,
   })
-  @ApiProperty({ description: '是否可删除' })
+  @ApiProperty({ description: '是否删除' })
   isDelete: IsDelete;
 
   @Column({ nullable: true, default: () => 'CURRENT_TIMESTAMP', comment: '路由创建时间' })
@@ -61,9 +65,9 @@ export class MenuList {
 
   @Column({
     type: 'enum',
-    enum: CanModify,
-    default: CanModify.MODIFY,
+    enum: Modifiable,
+    default: Modifiable.MODIFY,
   })
   @ApiProperty({ description: '是否可修改' })
-  canModify: number;
+  isModifiable: number;
 }

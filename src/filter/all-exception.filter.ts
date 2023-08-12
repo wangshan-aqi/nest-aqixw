@@ -1,5 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
-import e, { Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -7,7 +7,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp(); // 获取上下文 也就是获取http模块获取请求和响应对象
     const response = ctx.getResponse<Response>(); // 获取响应对象
     const request = ctx.getRequest<Request>(); // 获取请求对象
-    console.log(exception, 'exception');
+    // console.log(request, 'request');
 
     const status = exception.getStatus(); // 获取错误状态码
     const message = exception.message; // 获取错误信息
