@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { MenuListModule } from './menu-list/menu-list.module';
 import { ButtonPermissionsModule } from './button-permissions/button-permissions.module';
 import { RolePermissionsModule } from './role-permissions/role-permissions.module';
+import { AllEnumsModule } from './all-enums/all-enums.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { RolePermissionsModule } from './role-permissions/role-permissions.modul
     MenuListModule,
     ButtonPermissionsModule,
     RolePermissionsModule,
+    AllEnumsModule,
   ],
   exports: [
     UsersModule,

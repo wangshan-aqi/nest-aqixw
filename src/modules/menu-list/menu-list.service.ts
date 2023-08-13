@@ -36,6 +36,7 @@ export class MenuListService {
     menuItem.parentId = parentId;
     menuItem.roleCode = roleCode;
     menuItem.order = order;
+    menuItem.isDelete = 1;
     menuItem.isModifiable = isModifiable;
     if (parentId === null) {
       menuItem.parentId = 0;
@@ -59,14 +60,29 @@ export class MenuListService {
   async findAll(findMenuListDto): Promise<any> {
     const { page, pageSize } = findMenuListDto;
     const menuQueryBuilder = await this.menuListRepository.createQueryBuilder('menu_list');
+
     const [items, total] = await menuQueryBuilder
-      .select()
-      .where('menu_list.isDelete = :isDelete', { isDelete: 1 })
+      .select([
+        'menu_list.id',
+        'menu_list.menuName',
+        'menu_list.routeName',
+        'menu_list.routePath',
+        'menu_list.filePath',
+        'menu_list.icon',
+        'menu_list.parentId',
+        'menu_list.roleCode',
+        'menu_list.order',
+        'menu_list.isModifiable',
+      ])
+      .where('menu_list.isDelete = :isDelete', { isDelete: '1' })
       .skip((page - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
+
     return {
-      items,
+      data: items,
+      currentPage: page,
+      pageSize: pageSize,
       total,
     };
   }
