@@ -32,9 +32,9 @@ export class MenuListController {
     return this.menuListService.findOne(+id);
   }
 
-  @Patch('menu-list:id')
-  update(@Param('id') id: string, @Body() updateMenuListDto: UpdateMenuListDto) {
-    return this.menuListService.update(+id, updateMenuListDto);
+  @Patch('menu-list')
+  update(@Body() updateMenuListDto: UpdateMenuListDto) {
+    return this.menuListService.update(updateMenuListDto);
   }
 
   @Delete('menu-list:id')

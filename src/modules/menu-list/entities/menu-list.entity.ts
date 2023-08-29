@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, BeforeInsert, In } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, Matches, MaxLength, IsOptional } from 'class-validator';
 import { Modifiable, IsDelete } from 'src/modules/users/dto/create-user.dto';
@@ -6,17 +6,13 @@ import { Role } from '../interface/models';
 
 @Entity('menu_list')
 export class MenuListEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('increment')
   @ApiProperty({ description: '菜单id' })
   id: number;
 
   @Column()
   @ApiProperty({ description: '菜单名称', example: '首页' })
   menuName: string;
-
-  @Column()
-  @ApiProperty({ description: '路由名称', example: 'Home' })
-  routeName: string;
 
   @Column()
   @ApiProperty({ description: '路由路径' })
@@ -30,10 +26,10 @@ export class MenuListEntity {
   @ApiProperty({ description: '路由图标' })
   icon: string;
 
-  @Column({ nullable: true, default: '0' })
+  @Column({ nullable: true }) // 可选 为null 时不会报错
   @ApiProperty({ description: '父级id' })
   @IsOptional()
-  parentId: number;
+  parentId: number | null;
 
   @Column({ nullable: true, default: 0 })
   @ApiProperty({ description: '序号' })

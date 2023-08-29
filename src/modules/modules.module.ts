@@ -6,6 +6,7 @@ import { MenuListModule } from './menu-list/menu-list.module';
 import { ButtonPermissionsModule } from './button-permissions/button-permissions.module';
 import { RolePermissionsModule } from './role-permissions/role-permissions.module';
 import { AllEnumsModule } from './all-enums/all-enums.module';
+import { IconListModule } from './icon-config/icon-list.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AllEnumsModule } from './all-enums/all-enums.module';
     ButtonPermissionsModule,
     RolePermissionsModule,
     AllEnumsModule,
+    IconListModule,
   ],
   exports: [
     UsersModule,

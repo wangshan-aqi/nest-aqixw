@@ -16,7 +16,7 @@ export class MenuListService {
   async create(createMenuListDto: CreateMenuListDto) {
     const {
       menuName,
-      routeName,
+      // routeName,
       routePath,
       filePath,
       icon,
@@ -25,11 +25,9 @@ export class MenuListService {
       order,
       isModifiable,
     } = createMenuListDto;
-    // console.log(createMenuListDto);
 
     const menuItem = new MenuListEntity();
     menuItem.menuName = menuName;
-    menuItem.routeName = routeName;
     menuItem.routePath = routePath;
     menuItem.filePath = filePath;
     menuItem.icon = icon;
@@ -65,7 +63,6 @@ export class MenuListService {
       .select([
         'menu_list.id',
         'menu_list.menuName',
-        'menu_list.routeName',
         'menu_list.routePath',
         'menu_list.filePath',
         'menu_list.icon',
@@ -75,6 +72,7 @@ export class MenuListService {
         'menu_list.isModifiable',
       ])
       .where('menu_list.isDelete = :isDelete', { isDelete: '1' })
+      .orderBy('menu_list.order', 'ASC')
       .skip((page - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
@@ -87,7 +85,17 @@ export class MenuListService {
     };
   }
   async findMenuParentsAll() {
-    const res = await this.menuListRepository.find();
+    // const res = await this.menuListRepository.find({
+    //   where
+    // });
+    const menuParentsBuilder = await this.menuListRepository.createQueryBuilder('menu_list');
+    const res = await menuParentsBuilder
+      .select(['menu_list.id', 'menu_list.menuName'])
+      .where('menu_list.parentId = :parentId', { parentId: 0 })
+      // .andWhere('menu_list.filePath = :filePath', { filePath: null })
+      .getMany();
+    console.log(res);
+
     if (res.length > 0) {
       const parents = res.map(item => {
         return {
@@ -111,17 +119,21 @@ export class MenuListService {
     }
   }
 
-  async update(id: number, updateMenuListDto: UpdateMenuListDto) {
+  async update(updateMenuListDto: UpdateMenuListDto) {
     const isExist = await this.menuListRepository.findOne({
-      where: { id },
+      where: { id: updateMenuListDto.id },
     });
 
     if (isExist) {
       const updateData = {
         ...isExist,
-        updateMenuListDto,
+        ...updateMenuListDto,
       };
-      return this.menuListRepository.save(updateData);
+      return {
+        code: 200,
+        data: this.menuListRepository.save(updateData),
+        message: '修改成功',
+      };
     }
     throw new HttpException('菜单不存在', HttpStatus.BAD_REQUEST);
   }
