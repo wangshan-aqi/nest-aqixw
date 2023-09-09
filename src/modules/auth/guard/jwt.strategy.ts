@@ -1,7 +1,8 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+import { Request } from 'express';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(@InjectRedis() private readonly redis: Redis) {
@@ -13,19 +14,18 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(req, user: any) {
-    const cache_access_token = await this.redis.get(`user:${user.sub}`);
-
+  async validate(req: Request, user: any) {
+    // 登录 token
     const access_token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-    if (cache_access_token) {
-      const cache = decodeURIComponent(cache_access_token);
-      // console.log(cache, 'cache');
+    // redis 缓存 token
+    const cacheToken = await this.redis.get(`user:${user.sub}`);
+
+    // 判断缓存token
+    if (!cacheToken) {
+      throw new UnauthorizedException('token已过期');
     }
-    if (access_token) {
-      const token = decodeURIComponent(access_token);
-      // console.log(access_token, 'access_token');
-    }
-    if (cache_access_token && cache_access_token !== access_token) {
+
+    if (cacheToken && cacheToken) {
       throw new ForbiddenException('token令牌无效');
     }
 

@@ -53,7 +53,7 @@ export class AuthService {
   async login(user: any): Promise<ISignInUserRes> {
     const access_token = this.signToken(user);
     const refresh_token = this.signRefreshToken(user);
-    await this.redis.set(`user:${user.userId}`, access_token);
+    await this.redis.set(`user:${user.userId}`, refresh_token);
 
     return await {
       userId: user.userId,

@@ -57,4 +57,23 @@ export class AuthController {
     res.type('image/svg+xml'); // 响应的类型
     res.send(svgCaptcha.data);
   }
+
+  @Public()
+  @Post('refresh') // 刷新token
+  async refreshToken(@Req() req: Request, @Res() res: Response) {
+    console.log(req.body, 'req.body');
+
+    const { refresh_token } = req.body;
+    console.log(refresh_token, 'refresh_token');
+
+    // const { userId } = await this.toolService.verifyToken(refresh_token);
+    // const user = await this.authService.findOneUser(userId);
+    // const access_token = this.authService.signToken(user);
+    // const new_refresh_token = this.authService.signRefreshToken(user);
+    // await this.redis.set(`user:${user.userId}`, new_refresh_token);
+    // return res.json({
+    //   access_token,
+    //   refresh_token: new_refresh_token,
+    // });
+  }
 }
