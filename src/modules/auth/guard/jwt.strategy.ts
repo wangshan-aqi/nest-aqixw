@@ -25,10 +25,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       throw new UnauthorizedException('token已过期');
     }
 
-    if (cacheToken && cacheToken) {
-      throw new ForbiddenException('token令牌无效');
-    }
-
     if (!user) {
       throw new ForbiddenException('未授权');
     }
