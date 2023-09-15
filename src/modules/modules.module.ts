@@ -7,6 +7,7 @@ import { ButtonPermissionsModule } from './button-permissions/button-permissions
 import { RolePermissionsModule } from './role-permissions/role-permissions.module';
 import { AllEnumsModule } from './all-enums/all-enums.module';
 import { IconListModule } from './icon-config/icon-list.module';
+import { EnumListModule } from './enum-list/enum-list.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { IconListModule } from './icon-config/icon-list.module';
     RolePermissionsModule,
     AllEnumsModule,
     IconListModule,
+    EnumListModule,
   ],
   exports: [
     UsersModule,

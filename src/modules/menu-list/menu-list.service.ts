@@ -70,6 +70,8 @@ export class MenuListService {
         'menu_list.roleCode',
         'menu_list.order',
         'menu_list.isModifiable',
+        'menu_list.createdAt',
+        'menu_list.updatedAt',
       ])
       .where('menu_list.isDelete = :isDelete', { isDelete: '1' })
       .orderBy('menu_list.order', 'ASC')
@@ -85,16 +87,11 @@ export class MenuListService {
     };
   }
   async findMenuParentsAll() {
-    // const res = await this.menuListRepository.find({
-    //   where
-    // });
     const menuParentsBuilder = await this.menuListRepository.createQueryBuilder('menu_list');
     const res = await menuParentsBuilder
       .select(['menu_list.id', 'menu_list.menuName'])
-      .where('menu_list.parentId = :parentId', { parentId: 0 })
-      // .andWhere('menu_list.filePath = :filePath', { filePath: null })
+      .where('menu_list.parentId Is NULL')
       .getMany();
-    console.log(res);
 
     if (res.length > 0) {
       const parents = res.map(item => {
