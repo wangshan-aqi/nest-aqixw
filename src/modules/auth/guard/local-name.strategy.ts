@@ -5,13 +5,13 @@ import { AuthService } from '../auth.service';
 import { Request } from 'express';
 import { RegistrationMethod } from '../../users/dto/create-user.dto';
 import { decryptedText } from '../../../shard/constant';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+// import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { ExtractJwt } from 'passport-jwt';
 // 本地策略 - 用户名
 @Injectable()
 export class UserNameLocalStrategy extends PassportStrategy(Strategy, 'user-name') {
   constructor(
-    @InjectRedis() private readonly redis: Redis,
+    // @InjectRedis() private readonly redis: Redis,
     private readonly authService: AuthService,
   ) {
     super({

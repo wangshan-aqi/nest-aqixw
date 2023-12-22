@@ -9,8 +9,8 @@ import { LoggerMiddleware } from './middleware/logger.middleware';
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { ModulesModule } from './modules/modules.module';
-import { RedisModule } from '@nestjs-modules/ioredis';
-import redisConfig from './config/redis.config';
+// import { RedisModule } from '@nestjs-modules/ioredis';
+// import redisConfig from './config/redis.config';
 import { ValidationPipe } from './pipe/Validation.pipe';
 
 @Module({
@@ -19,7 +19,11 @@ import { ValidationPipe } from './pipe/Validation.pipe';
     ConfigModule.forRoot({
       envFilePath: ['.env.development', `.env.${process.env.NODE_ENV}`], // 环境变量文件
       isGlobal: true, // 全局模块
-      load: [configuration, databaseConfig, redisConfig], // 加载配置文件
+      load: [
+        configuration,
+        databaseConfig,
+        // redisConfig
+      ], // 加载配置文件
       ignoreEnvFile: false, // 忽略环境变量文件
       expandVariables: true, // 扩展变量
       validationSchema: undefined, // 验证模式
@@ -43,23 +47,23 @@ import { ValidationPipe } from './pipe/Validation.pipe';
       },
       inject: [ConfigService],
     }),
-    RedisModule.forRootAsync({
-      useFactory: (configService: ConfigService) => {
-        const redisConfig = configService.get('redis');
-        console.log(redisConfig);
+    // RedisModule.forRootAsync({
+    //   useFactory: (configService: ConfigService) => {
+    //     const redisConfig = configService.get('redis');
+    //     console.log(redisConfig);
 
-        return {
-          config: {
-            // url: `redis://${redisConfig.host}:${redisConfig.port}/${redisConfig.db}`,
-            host: redisConfig.host,
-            port: redisConfig.port,
-            password: redisConfig.password,
-            db: redisConfig.db,
-          },
-        };
-      },
-      inject: [ConfigService],
-    }),
+    //     return {
+    //       config: {
+    //         // url: `redis://${redisConfig.host}:${redisConfig.port}/${redisConfig.db}`,
+    //         host: redisConfig.host,
+    //         port: redisConfig.port,
+    //         password: redisConfig.password,
+    //         db: redisConfig.db,
+    //       },
+    //     };
+    //   },
+    //   inject: [ConfigService],
+    // }),
 
     ModulesModule,
   ],

@@ -5,12 +5,12 @@ import { RegistrationMethod } from '../users/dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ISignInUserRes } from './interface/res.interface';
 import { decryptedText } from 'src/shard/constant';
-import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
+// import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRedis() private readonly redis: Redis,
+    // @InjectRedis() private readonly redis: Redis,
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
@@ -53,7 +53,7 @@ export class AuthService {
   async login(user: any): Promise<ISignInUserRes> {
     const access_token = this.signToken(user);
     const refresh_token = this.signRefreshToken(user);
-    await this.redis.set(`user:${user.userId}`, refresh_token);
+    // await this.redis.set(`user:${user.userId}`, refresh_token);
 
     return await {
       userId: user.userId,
